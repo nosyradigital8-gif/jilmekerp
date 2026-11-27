@@ -1,6 +1,6 @@
 'use client'
 
-import { FormEvent, useEffect, useMemo, useState } from 'react'
+import { FormEvent, useMemo, useState } from 'react'
 import {
   Activity,
   AlertTriangle,
@@ -128,15 +128,6 @@ function Reports() { return <><SectionTitle eyebrow="Business intelligence" titl
 export default function HomePage() {
   const [active, setActive] = useState<ModuleKey>('dashboard')
   const [mobileOpen, setMobileOpen] = useState(false)
-  const [authReady, setAuthReady] = useState(false)
-  useEffect(() => {
-    if (window.localStorage.getItem('jilmeker-demo-auth') !== 'active') {
-      window.location.replace('/login')
-      return
-    }
-    setAuthReady(true)
-  }, [])
-  if (!authReady) return <div className="auth-loading"><div className="loading-mark">JC</div><span>Opening Jilmeker ERP…</span></div>
   const activeTitle = navGroups.flatMap(group => group.items).find(item => item.key === active)?.label ?? 'Dashboard'
   const module = useMemo(() => {
     if (active === 'customers') return <Customers />

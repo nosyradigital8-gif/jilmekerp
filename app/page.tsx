@@ -8,6 +8,7 @@ import {
   ArrowUpRight,
   BarChart3,
   Bell,
+  CalendarDays,
   Calculator,
   Check,
   ChevronDown,
@@ -22,6 +23,7 @@ import {
   Menu,
   MoreHorizontal,
   Package,
+  PhoneCall,
   Plus,
   ReceiptText,
   Search,
@@ -30,6 +32,7 @@ import {
   Users,
   WalletCards,
   X,
+  MapPin,
 } from 'lucide-react'
 import { calculateGableRoof, type RoofEstimate, type RoofInputs } from '../lib/roofing'
 
@@ -65,6 +68,25 @@ const projects: Project[] = [
   { name: 'Nungua Retail Park', customer: 'Nungua Retail Park', status: 'Awaiting approval', progress: 42, due: '28 Dec 2026', value: 'GH₵ 342,000' },
 ]
 
+const quotePipeline = [
+  { label: 'New enquiries', count: 12, value: 'GH₵ 486,000', tone: 'orange' },
+  { label: 'Site visit booked', count: 7, value: 'GH₵ 312,400', tone: 'blue' },
+  { label: 'Estimate in review', count: 5, value: 'GH₵ 228,800', tone: 'purple' },
+  { label: 'Quotation sent', count: 4, value: 'GH₵ 526,600', tone: 'green' },
+]
+
+const upcomingMilestones = [
+  { title: 'Material delivery · Apex Learning Centre', date: 'Tomorrow · 09:00', owner: 'Procurement team', icon: Package },
+  { title: 'Roof survey · K. Mensah Residence', date: '24 Nov · 10:30', owner: 'Kwame Asare · Surveyor', icon: ClipboardCheck },
+  { title: 'Customer review · Nungua Retail Park', date: '26 Nov · 14:00', owner: 'Sales team', icon: CalendarDays },
+]
+
+const customerEnquiries = [
+  { name: 'Agyeman Properties', detail: 'Industrial roof replacement · Tema', channel: 'Phone enquiry', time: '12 min ago' },
+  { name: 'D. Owusu Residence', detail: 'Roof leak inspection · Madina', channel: 'Website form', time: '46 min ago' },
+  { name: 'Keta Guest House', detail: 'New roof estimate · Volta Region', channel: 'Referral', time: '2 hrs ago' },
+]
+
 const inventory = [
   { item: 'Aluzinc roofing sheet 0.45mm', sku: 'SHT-045-AZ', stock: 128, unit: 'sheets', min: 160, value: 'GH₵ 44,800' },
   { item: 'Self-drilling roofing screws', sku: 'SCR-050-BL', stock: 920, unit: 'pcs', min: 500, value: 'GH₵ 2,760' },
@@ -98,6 +120,7 @@ function Dashboard({ onNavigate }: { onNavigate: (key: ModuleKey) => void }) {
     <div className="kpi-grid"><KpiCard label="Estimated sales pipeline" value="GH₵ 603,000" delta="12.4%" icon={CircleDollarSign} tone="orange" /><KpiCard label="Collected this month" value="GH₵ 286,400" delta="8.2%" icon={WalletCards} tone="blue" /><KpiCard label="Active projects" value="08" delta="2 this week" icon={Hammer} tone="purple" /><KpiCard label="Open quotations" value="14" delta="-3.1%" icon={FileText} tone="green" /></div>
     <div className="dashboard-grid"><section className="panel revenue-panel"><div className="panel-heading"><div><span className="panel-kicker">Cash movement</span><h2>Revenue trend</h2></div><button className="select-button">This year <ChevronDown size={14} /></button></div><div className="chart-meta"><strong>GH₵ 1.28m</strong><span><ArrowUpRight size={14} /> 14.6% vs last period</span></div><div className="bar-chart">{revenue.map((height, index) => <div className="bar-column" key={monthLabels[index]}><div className="bar" style={{ height: `${height}%` }} /><small>{monthLabels[index]}</small></div>)}</div></section><section className="panel attention-panel"><div className="panel-heading"><div><span className="panel-kicker">Needs attention</span><h2>Operations pulse</h2></div><button className="icon-button"><MoreHorizontal size={17} /></button></div><div className="attention-list"><div><span className="attention-icon red"><AlertTriangle size={16} /></span><div><strong>3 low-stock items</strong><small>Ridge caps and roofing sheets need review</small></div><ChevronRight size={16} /></div><div><span className="attention-icon amber"><Clock3 size={16} /></span><div><strong>4 quotations expiring</strong><small>Follow up before the next 7 days</small></div><ChevronRight size={16} /></div><div><span className="attention-icon blue"><ClipboardCheck size={16} /></span><div><strong>2 surveys scheduled</strong><small>Tomorrow · Greater Accra region</small></div><ChevronRight size={16} /></div></div><button className="panel-link">Open operations queue <ArrowUpRight size={15} /></button></section></div>
     <div className="dashboard-grid lower"><section className="panel"><div className="panel-heading"><div><span className="panel-kicker">Delivery board</span><h2>Project progress</h2></div><button className="panel-link" onClick={() => onNavigate('projects')}>View projects <ArrowUpRight size={15} /></button></div><div className="project-list">{projects.map(project => <div className="project-row" key={project.name}><div className="project-mark">{project.name.slice(0, 1)}</div><div className="project-main"><strong>{project.name}</strong><small>{project.customer} · Due {project.due}</small></div><div className="project-progress"><div><span style={{ width: `${project.progress}%` }} /></div><b>{project.progress}%</b></div><StatusBadge tone={project.status === 'In progress' ? 'good' : project.status === 'Awaiting approval' ? 'warn' : 'info'}>{project.status}</StatusBadge></div>)}</div></section><section className="panel activity-panel"><div className="panel-heading"><div><span className="panel-kicker">Live workspace</span><h2>Recent activity</h2></div><button className="icon-button"><MoreHorizontal size={17} /></button></div><div className="activity-list"><div><span className="activity-dot orange" /><div><strong>Payment recorded</strong><small>GH₵ 48,000 · Apex Learning Centre</small></div><time>09:42</time></div><div><span className="activity-dot blue" /><div><strong>Survey added</strong><small>K. Mensah Residence · Adenta</small></div><time>08:18</time></div><div><span className="activity-dot purple" /><div><strong>Quote revised</strong><small>Nungua Retail Park · v2</small></div><time>Yesterday</time></div><div><span className="activity-dot green" /><div><strong>Stock received</strong><small>128 Aluzinc sheets · Main store</small></div><time>Yesterday</time></div></div></section></div>
+    <div className="dashboard-detail-grid"><section className="panel pipeline-panel"><div className="panel-heading"><div><span className="panel-kicker">Sales workflow</span><h2>Quotation pipeline</h2></div><button className="panel-link" onClick={() => onNavigate('customers')}>Open CRM <ArrowUpRight size={15} /></button></div><div className="pipeline-list">{quotePipeline.map(stage => <div className="pipeline-row" key={stage.label}><span className={`pipeline-icon ${stage.tone}`}><FileText size={15} /></span><div><strong>{stage.label}</strong><small>{stage.count} records in this stage</small></div><b>{stage.value}</b><ChevronRight size={15} /></div>)}</div></section><section className="panel milestones-panel"><div className="panel-heading"><div><span className="panel-kicker">Planning calendar</span><h2>Upcoming milestones</h2></div><button className="icon-button"><CalendarDays size={17} /></button></div><div className="milestone-list">{upcomingMilestones.map(milestone => { const Icon = milestone.icon; return <div key={milestone.title}><span className="milestone-icon"><Icon size={15} /></span><div><strong>{milestone.title}</strong><small>{milestone.date} · {milestone.owner}</small></div></div> })}</div></section><section className="panel enquiries-panel"><div className="panel-heading"><div><span className="panel-kicker">Lead inbox</span><h2>Recent enquiries</h2></div><button className="panel-link" onClick={() => onNavigate('customers')}>View all <ArrowUpRight size={15} /></button></div><div className="enquiry-list">{customerEnquiries.map(enquiry => <div key={enquiry.name}><span className="enquiry-avatar"><PhoneCall size={14} /></span><div><strong>{enquiry.name}</strong><small>{enquiry.detail} · {enquiry.channel}</small></div><time>{enquiry.time}</time></div>)}</div></section></div>
   </>
 }
 

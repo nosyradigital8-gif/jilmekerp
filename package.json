@@ -1,0 +1,28 @@
+{
+  "name": "jilmekerp",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "next dev --hostname 0.0.0.0 --port 3002",
+    "build": "next build",
+    "start": "next start --hostname 0.0.0.0 --port 3002",
+    "typecheck": "tsc --noEmit",
+    "test:roofing": "tsx scripts/roofing-check.ts"
+  },
+  "dependencies": {
+    "lucide-react": "latest",
+    "next": "latest",
+    "react": "latest",
+    "react-dom": "latest"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "latest",
+    "@types/node": "latest",
+    "@types/react": "latest",
+    "@types/react-dom": "latest",
+    "tailwindcss": "latest",
+    "tsx": "latest",
+    "typescript": "latest"
+  }
+}

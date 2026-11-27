@@ -1,6 +1,6 @@
 'use client'
 
-import { FormEvent, useMemo, useState } from 'react'
+import { FormEvent, useEffect, useMemo, useState } from 'react'
 import {
   Activity,
   AlertTriangle,
@@ -43,6 +43,13 @@ type ModuleKey = 'dashboard' | 'customers' | 'surveys' | 'projects' | 'inventory
 
 type Customer = { name: string; type: string; location: string; status: string; value: string }
 type Project = { name: string; customer: string; status: string; progress: number; due: string; value: string }
+
+const mobileMoreItems = [
+  { key: 'surveys' as ModuleKey, label: 'Roof surveys', icon: ClipboardCheck },
+  { key: 'inventory' as ModuleKey, label: 'Inventory', icon: Package },
+  { key: 'finance' as ModuleKey, label: 'Finance & invoices', icon: WalletCards },
+  { key: 'reports' as ModuleKey, label: 'Reports & analytics', icon: BarChart3 },
+]
 
 const navGroups = [
   { label: 'Workspace', items: [
@@ -172,6 +179,12 @@ function Reports() { return <><SectionTitle eyebrow="Business intelligence" titl
 export default function HomePage() {
   const [active, setActive] = useState<ModuleKey>('dashboard')
   const [mobileOpen, setMobileOpen] = useState(false)
+  const [mobileMoreOpen, setMobileMoreOpen] = useState(false)
+  const [authState, setAuthState] = useState<'checking' | 'active' | 'signed-out'>('checking')
+  useEffect(() => {
+    if (window.localStorage.getItem('jilmeker-demo-auth') === 'active') setAuthState('active')
+    else { setAuthState('signed-out'); window.location.replace('/login') }
+  }, [])
   const activeTitle = navGroups.flatMap(group => group.items).find(item => item.key === active)?.label ?? 'Dashboard'
   const module = useMemo(() => {
     if (active === 'customers') return <Customers />
@@ -182,6 +195,7 @@ export default function HomePage() {
     if (active === 'reports') return <Reports />
     return <Dashboard onNavigate={setActive} />
   }, [active])
-  const navigate = (key: ModuleKey) => { setActive(key); setMobileOpen(false) }
-  return <div className="app-shell"><aside className={mobileOpen ? 'sidebar mobile-open' : 'sidebar'}><div className="brand"><img src="/jilmek-logo.png" alt="Jilmek Roofing & Construction Ltd." /><span className="brand-caption">ERP CONTROL ROOM</span></div><div className="workspace-switcher"><div className="workspace-avatar">JC</div><div><strong>Jilmek Construction</strong><span>Demo workspace</span></div><ChevronDown size={15} /></div><nav className="sidebar-nav" aria-label="ERP navigation">{navGroups.map(group => <div className="nav-group" key={group.label}><span className="nav-label">{group.label}</span>{group.items.map(item => { const Icon = item.icon; return <button className={active === item.key ? 'nav-item active' : 'nav-item'} key={item.key} onClick={() => navigate(item.key)}><Icon size={17} /><span>{item.label}</span>{item.key === 'inventory' && <em>3</em>}</button>})}</div>)}</nav><div className="sidebar-bottom"><button className="nav-item"><Settings size={17} /><span>Settings</span></button><div className="user-card"><div className="user-avatar">KA</div><div><strong>Kwame Asare</strong><span>Administrator</span></div><MoreHorizontal size={16} /></div></div></aside><div className="main-shell"><header className="topbar"><div className="topbar-left"><button className="mobile-menu" onClick={() => setMobileOpen(!mobileOpen)} aria-label="Toggle navigation"><Menu size={20} /></button><div className="breadcrumbs"><span>Jilmek ERP</span><ChevronRight size={14} /><strong>{activeTitle}</strong></div></div><div className="topbar-actions"><div className="global-search"><Search size={16} /><input placeholder="Search anything" /><kbd>⌘ K</kbd></div><button className="topbar-icon"><Bell size={18} /><i /></button><div className="topbar-profile"><span className="user-avatar small">KA</span><ChevronDown size={14} /></div></div></header><main className="content">{module}</main><footer className="app-footer"><span>Jilmeker ERP · Phase 1 working demo</span><span>Ghana Cedi · Africa/Accra</span></footer></div></div>
+  const navigate = (key: ModuleKey) => { setActive(key); setMobileOpen(false); setMobileMoreOpen(false) }
+  if (authState !== 'active') return <div className="auth-loading"><div className="loading-mark">J</div><span>Opening secure demo login…</span></div>
+  return <div className="app-shell"><aside className={mobileOpen ? 'sidebar mobile-open' : 'sidebar'}><div className="brand"><img src="/jilmek-logo.png" alt="Jilmek Roofing & Construction Ltd." /><span className="brand-caption">ERP CONTROL ROOM</span></div><div className="workspace-switcher"><div className="workspace-avatar">JC</div><div><strong>Jilmek Construction</strong><span>Demo workspace</span></div><ChevronDown size={15} /></div><nav className="sidebar-nav" aria-label="ERP navigation">{navGroups.map(group => <div className="nav-group" key={group.label}><span className="nav-label">{group.label}</span>{group.items.map(item => { const Icon = item.icon; return <button className={active === item.key ? 'nav-item active' : 'nav-item'} key={item.key} onClick={() => navigate(item.key)}><Icon size={17} /><span>{item.label}</span>{item.key === 'inventory' && <em>3</em>}</button>})}</div>)}</nav><div className="sidebar-bottom"><button className="nav-item"><Settings size={17} /><span>Settings</span></button><div className="user-card"><div className="user-avatar">KA</div><div><strong>Kwame Asare</strong><span>Administrator</span></div><button className="signout-button" onClick={() => { window.localStorage.removeItem('jilmeker-demo-auth'); window.location.replace('/login') }} aria-label="Sign out of demo"><MoreHorizontal size={16} /></button></div></div></aside><div className="main-shell"><header className="topbar"><div className="topbar-left"><button className="mobile-menu" onClick={() => setMobileOpen(!mobileOpen)} aria-label="Toggle navigation"><Menu size={20} /></button><div className="breadcrumbs"><span>Jilmek ERP</span><ChevronRight size={14} /><strong>{activeTitle}</strong></div></div><div className="topbar-actions"><div className="global-search"><Search size={16} /><input placeholder="Search anything" /><kbd>⌘ K</kbd></div><button className="topbar-icon"><Bell size={18} /><i /></button><div className="topbar-profile"><span className="user-avatar small">KA</span><ChevronDown size={14} /></div></div></header><main className="content">{module}</main><nav className="mobile-tabs" aria-label="Mobile ERP navigation"><button className={active === 'dashboard' ? 'mobile-tab active' : 'mobile-tab'} onClick={() => navigate('dashboard')}><LayoutDashboard size={18} /><span>Home</span></button><button className={active === 'customers' ? 'mobile-tab active' : 'mobile-tab'} onClick={() => navigate('customers')}><Users size={18} /><span>Customers</span></button><button className={active === 'projects' ? 'mobile-tab active' : 'mobile-tab'} onClick={() => navigate('projects')}><Hammer size={18} /><span>Projects</span></button><button className={mobileMoreOpen ? 'mobile-tab active' : 'mobile-tab'} onClick={() => setMobileMoreOpen(!mobileMoreOpen)}><MoreHorizontal size={18} /><span>More</span></button></nav>{mobileMoreOpen && <div className="mobile-more-sheet"><div className="mobile-more-heading"><strong>More modules</strong><button className="icon-button" onClick={() => setMobileMoreOpen(false)} aria-label="Close more modules"><X size={17} /></button></div><div className="mobile-more-grid">{mobileMoreItems.map(item => { const Icon = item.icon; return <button key={item.key} className={active === item.key ? 'mobile-more-item active' : 'mobile-more-item'} onClick={() => navigate(item.key)}><Icon size={18} /><span>{item.label}</span></button> })}</div></div>}<footer className="app-footer"><span>Jilmeker ERP · Phase 1 working demo</span><span>Ghana Cedi · Africa/Accra</span></footer></div></div>
 }
